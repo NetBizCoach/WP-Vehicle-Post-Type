@@ -20,7 +20,7 @@
 
   <body id="editor_popup">
     <h1>Vehicle Template</h1>
-    <br/>
+    <br>
     <table width="100%" cellpadding="5" cellspacing="0" border="0">
       <tr><td align="right" width="90">Price $</td><td><input id="price_input" name="price" size="10"/></td></tr>
       <tr><td align="right">Stock #</td><td><strong><input id="stock_input" name="stock" size="10"/></strong></td></tr>
@@ -28,9 +28,9 @@
       <tr><td align="right">Engine</td><td><strong><input id="engine_input" name="engine" size="10"/></strong></td></tr>
       <tr><td align="right">Transmission</td><td><strong><input id="transmission_input" name="transmission" size="10"/></strong></td></tr>
       <tr><td align="right">Mileage</td><td><strong><input id="mileage_input" name="mileage" size="10"/></strong></td></tr>
-      <tr><td colspan="2">Description<br/><textarea id="description_input" name="description" cols="60" rows="5"></textarea></td></tr>
-      <tr><td colspan="2">Equipment<br/><textarea id="equipment_input" name="equipment" cols="60" rows="5"></textarea></td></tr>
-      <tr><td colspan="2">Contact<br/><textarea id="contact_input" name="contact" cols="60" rows="5"></textarea></td></tr>
+      <tr><td colspan="2">Description<br><textarea id="description_input" name="description" cols="60" rows="5"></textarea></td></tr>
+      <tr><td colspan="2">Equipment<br><textarea id="equipment_input" name="equipment" cols="60" rows="5"></textarea></td></tr>
+      <tr><td colspan="2">Contact<br><textarea id="contact_input" name="contact" cols="60" rows="5"></textarea></td></tr>
     </table>
     <p style="text-align:right">
       <button type="button" onclick="add_template();">Update Vehicle</button>
@@ -66,26 +66,26 @@
       function build_vehicle() {
         vehicle  = '<p>[gallery link="file" columns="5"]</p>';
         vehicle += '<p id="vehicle">';
-        vehicle += '<label>Price:</label>$<span id="price">' + document.getElementById('price_input').value + '</span><br/>';
-        vehicle += '<label>Stock:</label>#<span id="stock">' + document.getElementById('stock_input').value + '</span><br/>';
-        vehicle += '<label>Color:</label><span id="color">' + document.getElementById('color_input').value + '</span><br/>';
+        vehicle += '<label>Price:</label>$<span id="price">' + document.getElementById('price_input').value + '</span><br>';
+        vehicle += '<label>Stock:</label>#<span id="stock">' + document.getElementById('stock_input').value + '</span><br>';
+        vehicle += '<label>Color:</label><span id="color">' + document.getElementById('color_input').value + '</span><br>';
         if (document.getElementById('engine_input').value)
-          vehicle += '<label>Engine:</label><span id="engine">' + document.getElementById('engine_input').value + '</span><br/>';
+          vehicle += '<label>Engine:</label><span id="engine">' + document.getElementById('engine_input').value + '</span><br>';
         if (document.getElementById('transmission_input').value)
-          vehicle += '<label>Transmission:</label><span id="transmission">' + document.getElementById('transmission_input').value + '</span><br/>';
+          vehicle += '<label>Transmission:</label><span id="transmission">' + document.getElementById('transmission_input').value + '</span><br>';
         if (document.getElementById('mileage_input').value)
-          vehicle += '<label>Mileage:</label><span id="mileage">' + document.getElementById('mileage_input').value + '</span><br/>';
+          vehicle += '<label>Mileage:</label><span id="mileage">' + document.getElementById('mileage_input').value + '</span><br>';
         vehicle += '</p>';
-        vehicle += '<p>Description:<br/><span id="description">' + document.getElementById('description_input').value + '</span></p>';
-        vehicle += '<p>Equipment:<br/><span id="equipment">' + document.getElementById('equipment_input').value + '</span></p>';
+        vehicle += '<p>Description:<br><span id="description">' + document.getElementById('description_input').value + '</span></p>';
+        vehicle += '<p>Equipment:<br><span id="equipment">' + document.getElementById('equipment_input').value + '</span></p>';
         if (document.getElementById('contact_input').value)
-          vehicle += '<p>Contact:<br/><span id="contact">' + document.getElementById('contact_input').value + '</span></p>';
+          vehicle += '<p>Contact:<br><span id="contact">' + document.getElementById('contact_input').value + '</span></p>';
         return vehicle;
       }
       
       function build_excerpt() {
         excerpt += '<p class="vehicle">';
-        excerpt += '<span class="excerpt-price">$' + document.getElementById('price_input').value + '</span><br/>';
+        excerpt += '<span class="excerpt-price">$' + document.getElementById('price_input').value + '</span><br>';
         excerpt += '<label>Stock:</label>#<span class="excerpt-stock">' + document.getElementById('stock_input').value + '</span>, ';
         excerpt += '<label>Color:</label><span class="excerpt-color">' + document.getElementById('color_input').value + '</span>, ';
         if (document.getElementById('engine_input').value)
@@ -93,6 +93,7 @@
         if (document.getElementById('transmission_input').value)
           excerpt += '<label>Transmission:</label><span class="excerpt-transmission">' + document.getElementById('transmission_input').value + '</span>, ';
         excerpt += '<label>Mileage:</label><span class="excerpt-mileage">' + document.getElementById('mileage_input').value + '</span>';
+        excerpt += "<br>\n[permalink text='Click here for more info and photos']";
         excerpt += '</p>';
         return excerpt;
       }
