@@ -84,7 +84,7 @@
       }
       
       function build_excerpt() {
-        excerpt  = '<p class="vehicle">';
+        excerpt += '<p class="vehicle">';
         excerpt += '<span class="excerpt-price">$' + document.getElementById('price_input').value + '</span><br/>';
         excerpt += '<label>Stock:</label>#<span class="excerpt-stock">' + document.getElementById('stock_input').value + '</span>, ';
         excerpt += '<label>Color:</label><span class="excerpt-color">' + document.getElementById('color_input').value + '</span>, ';
@@ -99,9 +99,10 @@
       
       function add_template() {
       	// Add vehicle to Excerpt
-      	var the_excerpt = parent.document.getElementById('excerpt');
-      	if (the_excerpt != null) {
-        	the_excerpt.innerHTML = build_excerpt();
+      	if (parent.document.getElementById('excerpt')) {
+      	  var new_excerpt = document.createTextNode(build_excerpt());
+        	parent.document.getElementById('excerpt').innerHTML = '';
+        	parent.document.getElementById('excerpt').appendChild(new_excerpt);
       	}
       	
         // Add vehicle to editor
