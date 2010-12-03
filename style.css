@@ -1,0 +1,6 @@
+#vehicle #photos{margin:10px;}
+#vehicle label{display:inline-block;width:100px;margin-right:5px;text-align:right;}
+#vehicle #price{color:#900;}
+
+.vehicle label{margin-right:0.5em;}
+.vehicle .excerpt-price{font-weight:bold;font-size:16pt;}
