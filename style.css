@@ -1,6 +1,12 @@
-#vehicle #photos{margin:10px;}
-#vehicle label{display:inline-block;width:100px;margin-right:5px;text-align:right;}
-#vehicle #price{color:#900;}
+.vehicle-detail #photos{margin:10px;}
+.vehicle-detail label{display:inline-block;font-weight:bold;width:100px;margin-right:5px;text-align:right;}
+.vehicle-detail #headline{display:block;color:#900;text-align:center;}
+.vehicle-detail #price{color:#900;}
 
-.vehicle label{margin-right:0.5em;}
-.vehicle .excerpt-price{font-weight:bold;font-size:16pt;}
+.vehicle-listing label{margin-right:0.3em;font-weight:bold;}
+.vehicle-listing .excerpt-headline{font-weight:bold;text-shadow:1px 1px 3px #999;}
+.vehicle-listing .excerpt-price{color:#900;font-weight:bold;font-size:16pt;text-shadow:1px 1px 3px #999;}
+
+article.category-inventory{border:solid 1px #ccc;border-radius:5px;}
+article.category-inventory header h1{padding:2px 5px;border-bottom:solid 1px #ccc;background:#eee;}
+article.category-inventory section{padding:5px;overflow:hidden;}
