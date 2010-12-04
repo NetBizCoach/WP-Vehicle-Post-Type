@@ -9,4 +9,4 @@
 
 article.category-inventory{border:solid 1px #ccc;border-radius:5px;}
 article.category-inventory header h1{padding:2px 5px;border-bottom:solid 1px #ccc;background:#eee;}
-article.category-inventory section{padding:5px;overflow:hidden;}
+article.category-inventory section{display:block;padding:5px!important;overflow:hidden;}
