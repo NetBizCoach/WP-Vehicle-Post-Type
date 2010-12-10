@@ -6,7 +6,3 @@
 .vehicle-listing label{margin-right:0.3em;font-weight:bold;}
 .vehicle-listing .excerpt-headline{font-weight:bold;text-shadow:1px 1px 3px #999;}
 .vehicle-listing .excerpt-price{color:#900;font-weight:bold;font-size:16pt;text-shadow:1px 1px 3px #999;}
-
-article.category-inventory{border:solid 1px #ccc;border-radius:5px;}
-article.category-inventory header h1{padding:2px 5px;border-bottom:solid 1px #ccc;background:#eee;}
-article.category-inventory section{display:block;padding:5px!important;overflow:hidden;}
