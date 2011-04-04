@@ -16,6 +16,12 @@ add_theme_support( ‘post-thumbnails’ );
 add_action('admin_init', 'vehicle_template_addbutton', 1);
 
 ##
+# Add shortcodes to the widgets and excerpt
+##
+add_filter( 'the_excerpt', 'do_shortcode' );
+add_filter( 'widget_text', 'do_shortcode' );
+
+##
 # My TinyMCE button
 ##
 function vehicle_template_addbutton() {
