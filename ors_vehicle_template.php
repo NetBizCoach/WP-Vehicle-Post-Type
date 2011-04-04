@@ -59,7 +59,7 @@ function create_vehicle_post_type() {
     'view_item' => __('View Vehicle'),
     'search_items' => __('Search Vehicles'),
     'not_found' =>  __('No vehicles found'),
-    'not_found_in_trash' => __('No vehicles found in Trash'), 
+    'not_found_in_trash' => __('No vehicles found in Trash'),
     'parent_item_colon' => '',
     'menu_name' => 'Vehicles'
 
@@ -68,11 +68,11 @@ function create_vehicle_post_type() {
     'labels' => $labels,
     'public' => true,
     'publicly_queryable' => true,
-    'show_ui' => true, 
-    'show_in_menu' => true, 
+    'show_ui' => true,
+    'show_in_menu' => true,
     'query_var' => true,
     'capability_type' => 'post',
-    'has_archive' => true, 
+    'has_archive' => true,
     'hierarchical' => false,
     'menu_position' => 6,
     'supports' => array('title','editor','author','thumbnail','excerpt'),
@@ -81,10 +81,21 @@ function create_vehicle_post_type() {
       'slug' => 'inventory',
       'with_front' => false
     )
-  ); 
+  );
 
   register_post_type( 'vehicle', $args );
 }
+
+function do_permalink( $atts ) {
+  extract( shortcode_atts( array('text' => "" ), $atts) );
+  if ( $text ) {
+    $url = get_permalink();
+    return "<a href='$url'>$text</a>";
+  } else {
+    return get_permalink();
+  }
+}
+add_shortcode( 'permalink', 'do_permalink' );
 
 // add_action("manage_vehicle_custom_column", "vehicle_column");
 // function vehicle_column($column)
