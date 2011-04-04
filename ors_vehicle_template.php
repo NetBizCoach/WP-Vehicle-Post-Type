@@ -8,7 +8,7 @@ Description: A template for Vehicles
 */
 
 # Post Thumbnails
-add_theme_support( ‘post-thumbnails’ );
+add_theme_support( 'post-thumbnails' );
 
 ##
 # Add my template button to the editor
