@@ -76,7 +76,7 @@ function create_vehicle_post_type() {
     'hierarchical' => false,
     'menu_position' => 6,
     'supports' => array('title','editor','author','thumbnail','excerpt'),
-    'menu_icon' => '/wp-content/plugins/'.basename(dirname(__FILE__)).'/car.png',
+    'menu_icon' => '/wp-content/plugins/'.basename(dirname(__FILE__)).'/icon.png',
     'rewrite' => array(
       'slug' => 'inventory',
       'with_front' => false
