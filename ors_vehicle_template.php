@@ -92,16 +92,20 @@ function create_vehicle_post_type() {
   register_post_type( 'vehicle', $args );
 }
 
-function do_permalink( $atts ) {
-  extract( shortcode_atts( array('text' => "" ), $atts) );
-  if ( $text ) {
-    $url = get_permalink();
-    return "<a href='$url'>$text</a>";
-  } else {
-    return get_permalink();
+/**
+ * Permalink shortcode
+ * [permalink text='Click to see more']
+ */
+if ( !function_exists('permalink_shortcode_handler') ) {
+  function permalink_shortcode_handler($atts) {
+    extract(shortcode_atts(array('text' => ''), $atts));
+    return sprintf(
+      "<a title='%s' href='%s'>%s</a>",
+      $text, get_permalink(), $text
+    );
   }
+  add_shortcode('permalink', 'permalink_shortcode_handler');
 }
-add_shortcode( 'permalink', 'do_permalink' );
 
 // add_action("manage_vehicle_custom_column", "vehicle_column");
 // function vehicle_column($column)
