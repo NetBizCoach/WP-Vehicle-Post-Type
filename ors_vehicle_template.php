@@ -18,6 +18,7 @@ add_action('admin_init', 'vehicle_template_addbutton', 1);
 ##
 # Add shortcodes to the widgets and excerpt
 ##
+add_filter( 'get_the_excerpt', 'do_shortcode' );
 add_filter( 'the_excerpt', 'do_shortcode' );
 add_filter( 'widget_text', 'do_shortcode' );
 
