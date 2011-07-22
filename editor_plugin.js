@@ -23,7 +23,7 @@
       ed.addButton('vehicle_template', {
         title: 'Vehicle Template',
         cmd: 'mcevehicleTemplate',
-        image: url + '/car.png'
+        image: url + '/icon.png'
       });
     },
     getInfo: function() {
