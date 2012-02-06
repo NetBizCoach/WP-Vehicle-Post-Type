@@ -247,9 +247,8 @@ function vehicle_edit_columns($columns){
     "cb" => "<input type=\"checkbox\" />",
     "thumbnail" => "Photo",
     "title" => "Headline",
-    "asking_price" => "Asking Price",
-    "available" => "Availability",
-    "vehicle_type" => "Type",
+    "ymm" => "Year Make Model",
+    "asking_price" => "Price",
     "author" => "Author",
     "date" => "Date Added"
   );
@@ -271,11 +270,17 @@ function vehicle_custom_columns($column){
     case "asking_price":
       echo '$' . $custom["asking_price"][0];
       break;
-    case "available":
-      echo $custom["available"][0];
+    case "ymm":
+      echo "{$custom["year"][0]} {$custom["make"][0]} {$custom["model"][0]}";
+      break;
+    case "color":
+      echo "{$custom["exterior_color"][0]} {$custom["interior_color"][0]}";
+      break;
+    case "mileage":
+      echo $custom["mileage"][0];
       break;
     case "vehicle_type":
-      echo $custom["home_size"][0] . 'sqft ' . $custom["property_type"][0];
+      echo $custom["vehicle_type"][0];
       break;
   }
 }

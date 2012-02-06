@@ -7,5 +7,7 @@
 
 .wp-list-table #thumbnail { width:70px; }
 .wp-list-table #title { width:250px; }
+.wp-list-table #asking_price { width:70px; }
+.wp-list-table #ymm { width:280px; }
 
 .form-table th { text-align:right; }
