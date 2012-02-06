@@ -1,0 +1,11 @@
+#vehicle_meta p { line-height:18pt; font-size:11pt; }
+#vehicle_meta .group { display:block; overflow:hidden; }
+#vehicle_meta .group > p { float:left; margin-right:40px; }
+#vehicle_meta ul.bundle  { display:block; clear:both; overflow:hidden; }
+#vehicle_meta ul.bundle li { display:inline-block;width:150px;float:left; }
+#vehicle_meta .numeric { text-align:right; }
+
+.wp-list-table #thumbnail { width:70px; }
+.wp-list-table #title { width:250px; }
+
+.form-table th { text-align:right; }

@@ -1,8 +1,27 @@
-.vehicle-detail #photos{margin:10px;}
-.vehicle-detail label{display:inline-block;font-weight:bold;width:100px;margin-right:5px;text-align:right;}
-.vehicle-detail #headline{display:block;color:#900;text-align:center;}
-.vehicle-detail #price{color:#900;}
+.blog .vehicle { border:solid 1px #333; border-radius:6px; overflow:hidden; margin-bottom:5px; }
 
-.vehicle-listing label{margin-right:0.3em;font-weight:bold;}
-.vehicle-listing .excerpt-headline{font-weight:bold;text-shadow:1px 1px 3px #999;}
-.vehicle-listing .excerpt-price{color:#900;font-weight:bold;font-size:16pt;text-shadow:1px 1px 3px #999;}
+.vehicle header { border-bottom: solid 1px #333; padding: 0px; background:#eee; border-radius:6px 6px 0 0; }
+.vehicle header h2, .vehicle header h2 a { color: black; }
+.vehicle header time { display: none; }
+.vehicle img { float:left; margin:0 5px 10px 10px; }
+.vehicle .price { display:inline-block; min-width:133px; color:white; background:#900; padding:5px 15px; }
+.vehicle .title { display:inline-block; padding:5px 15px; }
+.vehicle .vehicle-type { display:inline-block; padding:5px 15px; float:right; }
+.vehicle .availability.available-now { display:none; }
+.vehicle .availability.coming-soon { position:relative; float:right; border:solid 2px #f00; background:rgba(230,0,0,0.5); border-radius:100px 0px 0px 100px; width:70px; height:45px; z-index:3; padding:10px 10px; margin:0px 5px 0px; text-align:center; }
+.vehicle .p { line-height: 12pt; }
+.vehicle .p label { display:inline-block; width:120px; margin-right:5px; text-align:right; font-weight:bold; }
+.vehicle.status-private { opacity:0.3; }
+
+#ors-vehicle-search-box { border:solid 1px black; border-radius:5px; padding:10px; background:#eee; color:black; text-align:center; }
+#vehicle_type,
+#price_near,
+#mileage_near { margin-right:8px;width:50px; }
+#text_search { margin-right:8px;width:150px; }
+
+.single .vehicle header { margin-top:15px; border: solid 1px black; border-radius:6px; background:#eee; }
+.single .vehicle .options ul  { display:block; clear:both; overflow:hidden; }
+.single .vehicle .options li { width:200px;float:left; }
+.single .vehicle .inquiry-form { margin:20px 0; border:solid 1px #333; border-radius:4px 4px 0 0; padding: 10px; }
+.single .vehicle .inquiry-form h2 { border-bottom:solid 1px #333; border-radius:4px 4px 0 0; color:black; background:#eee; padding:5px; margin:-10px -10px 5px -10px; }
+a.back-button { display:inline-block; margin:10px 0 0px 10px; border:solid 1px black; border-radius:5px; padding:2px 5px; background:#eee; color:black; }
