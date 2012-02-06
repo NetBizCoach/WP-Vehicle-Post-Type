@@ -433,7 +433,7 @@ function vehicle_excerpt_filter($content) {
   $output  = '';
 
   if ( !has_post_thumbnail( $post->ID ) ) {
-    $output .= '<a href="' . get_permalink() . '"><img width="150" height="150" src="' . VEHICLE_PLUGIN_URL . '/nophoto.png" class="attachment-thumbnail wp-post-image" alt="No Photo" title="' . $address . '"></a>';
+    $output .= '<a href="' . get_permalink() . '"><img width="150" height="150" src="' . VEHICLE_PLUGIN_URL . '/nophoto.jpg" class="attachment-thumbnail wp-post-image" alt="No Photo" title="' . $address . '"></a>';
   }
 
   $output .= "<ul class='meta'>";
