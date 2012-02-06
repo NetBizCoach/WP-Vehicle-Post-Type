@@ -414,7 +414,7 @@ function vehicle_title_filter($content) {
 
   $output = '';
 
-  if ( $custom['asking_price'] )
+  if ( $custom['asking_price'] or $sold )
     $output .= '<span class="price">' . ($sold ? 'Sold' : '$'.number_format($custom['asking_price'])) . '</span>';
   if ( $custom['year'] or $custom['make'] or $custom['model'] )
     $output .= '<span class="title">' . "{$custom['year']} {$custom['make']} {$custom['model']}" . '</span>';
