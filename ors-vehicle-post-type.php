@@ -409,12 +409,18 @@ function vehicle_title_filter($content) {
 
   if ( $custom['available'] == 'Sold' ) $sold = true; else $sold = false;
 
+  global $the_real_title;
+  $the_real_title = $content;
+
   $output = '';
-  $output .= '<span class="price">' . ($sold ? 'Sold' : '$'.$custom['asking_price']) . '</span>';
+
+  if ( $custom['asking_price'] )
+    $output .= '<span class="price">' . ($sold ? 'Sold' : '$'.number_format($custom['asking_price'])) . '</span>';
   if ( $custom['year'] or $custom['make'] or $custom['model'] )
     $output .= '<span class="title">' . "{$custom['year']} {$custom['make']} {$custom['model']}" . '</span>';
   else
     $output .= '<span class="title">' . $content . '</span>';
+
   $output .= '<span class="vehicle-type">' . $custom['vehicle_type'] . '</span>';
 
   return $output;
@@ -436,8 +442,19 @@ function vehicle_excerpt_filter($content) {
     $output .= '<a href="' . get_permalink() . '"><img width="150" height="150" src="' . VEHICLE_PLUGIN_URL . '/nophoto.jpg" class="attachment-thumbnail wp-post-image" alt="No Photo" title="' . $address . '"></a>';
   }
 
+  global $the_real_title;
+  $output .= "<h2>$the_real_title</h2>";
   $output .= "<ul class='meta'>";
-  $output .= "  <li>{$custom['doors']} Door, {$custom['exterior_color']}/{$custom['interior_color']}, {$custom['mileage']} Miles</li>";
+  $output .= "<li>";
+  if ( $custom['doors'] )
+    $output .= "{$custom['doors']} Door";
+  if ( $custom['exterior_color'] )
+    $output .= ", {$custom['exterior_color']} Exterior";
+  if ( $custom['interior_color'] )
+    $output .= "/{$custom['interior_color']} Interior";
+  if ( $custom['mileage'] )
+    $output .= ", " . number_format($custom['mileage']) . " Miles";
+  $output .= "</li>";
   $output .= "</ul>";
 
   $output .= "<p class='excerpt'>";
@@ -466,7 +483,7 @@ function vehicle_content_filter($content) {
   if ( $custom['transmission'] )
     $output .= "  <li>Transmission: " . $custom['transmission'] . '</li>';
   if ( $custom['mileage'] )
-    $output .= "  <li>Mileage: " . $custom['mileage'] . ' Miles</li>';
+    $output .= "  <li>Mileage: " . number_format($custom['mileage']) . ' Miles</li>';
   if ( $custom['doors'] )
     $output .= "  <li>Doors: " . $custom['doors'] . '</li>';
   if ( $custom['exterior_color'] )
