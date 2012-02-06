@@ -296,6 +296,7 @@ function ors_vehicle_query($clauses) {
   global $wpdb, $ors_vehicle_cookies;
   $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'asking_price') as decimal) as price";
   $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'mileage') as decimal) as mileage";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'available') as available";
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'vehicle_type') as vehicle_type";
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'exterior_color') as exterior_color";
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'interior_color') as interior_color";
@@ -336,7 +337,7 @@ function ors_vehicle_query($clauses) {
       $clauses['orderby'] .= ", ABS({$ors_vehicle_cookies[$param]} - $field)";
     }
   }
-  if ( $clauses['orderby'] == '' ) $clauses['orderby'] = 'price ASC';
+  if ( $clauses['orderby'] == '' ) $clauses['orderby'] = 'available ASC, price ASC';
   else $clauses['orderby'] = substr($clauses['orderby'], 2);
 
   // print "<pre>" . print_r($clauses, 1) . "</pre>";
