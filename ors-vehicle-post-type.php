@@ -407,8 +407,10 @@ function vehicle_title_filter($content) {
     $custom[$key] = $value[0];
   }
 
+  if ( $custom['available'] == 'Sold' ) $sold = true; else $sold = false;
+
   $output = '';
-  $output .= '<span class="price">$' . $custom['asking_price'] . '</span>';
+  $output .= '<span class="price">' . ($sold ? 'Sold' : '$'.$custom['asking_price']) . '</span>';
   if ( $custom['year'] or $custom['make'] or $custom['model'] )
     $output .= '<span class="title">' . "{$custom['year']} {$custom['make']} {$custom['model']}" . '</span>';
   else
@@ -432,10 +434,6 @@ function vehicle_excerpt_filter($content) {
 
   if ( !has_post_thumbnail( $post->ID ) ) {
     $output .= '<a href="' . get_permalink() . '"><img width="150" height="150" src="' . VEHICLE_PLUGIN_URL . '/nophoto.png" class="attachment-thumbnail wp-post-image" alt="No Photo" title="' . $address . '"></a>';
-  }
-
-  if ( $custom['available'] ) {
-    $output .= "<div class='availability burst-8 " . preg_replace('/\-{2}+/','',preg_replace('/[^A-Za-z0-9]/','-',strtolower(strip_tags($custom['available'])))) . "'>" . ucwords($custom['available']) . "</div>";
   }
 
   $output .= "<ul class='meta'>";
