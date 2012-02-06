@@ -8,7 +8,7 @@
 .vehicle .title { display:inline-block; padding:5px 15px; }
 .vehicle .vehicle-type { display:inline-block; padding:5px 15px; float:right; }
 .vehicle .availability.available-now { display:none; }
-.vehicle .availability.coming-soon { position:relative; float:right; border:solid 2px #f00; background:rgba(230,0,0,0.5); border-radius:100px 0px 0px 100px; width:70px; height:45px; z-index:3; padding:10px 10px; margin:0px 5px 0px; text-align:center; }
+.vehicle .availability.sold { position:relative; float:right; border:solid 2px #f00; background:rgba(230,0,0,0.5); border-radius:100px 0px 0px 100px; width:70px; height:45px; z-index:3; padding:10px 10px; margin:0px 5px 0px; text-align:center; }
 .vehicle .p { line-height: 12pt; }
 .vehicle .p label { display:inline-block; width:120px; margin-right:5px; text-align:right; font-weight:bold; }
 .vehicle.status-private { opacity:0.3; }

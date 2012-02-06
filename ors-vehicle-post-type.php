@@ -133,8 +133,8 @@ function custom_vehicle_meta_boxes() {
       <input type="radio" name="vehicle_meta[available]" value="Available Now" <?php echo ($custom_data['available'][0] == 'Available Now') ? 'checked' : ''; ?>>
       <label>Available Now</label>
 
-      <input type="radio" name="vehicle_meta[available]" value="Coming Soon" <?php echo ($custom_data['available'][0] == 'Coming Soon') ? 'checked' : ''; ?>>
-      <label>Coming Soon</label>
+      <input type="radio" name="vehicle_meta[available]" value="Sold" <?php echo ($custom_data['available'][0] == 'Sold') ? 'checked' : ''; ?>>
+      <label>Sold</label>
     </p>
   </div>
 
@@ -426,7 +426,7 @@ function vehicle_excerpt_filter($content) {
     $custom[$key] = $value[0];
   }
 
-  if ( $custom['available'] == 'Coming Soon' ) $visible = false; else $visible = true;
+  if ( $custom['available'] == 'Sold' ) $visible = false; else $visible = true;
 
   $output  = '';
 
