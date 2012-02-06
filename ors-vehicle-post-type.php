@@ -116,11 +116,6 @@ function custom_vehicle_meta_boxes() {
   ?>
   <div class="group">
     <p>
-      <label>Stock:</label><br>
-      <input type="text" name="vehicle_meta[stock]" value="<?php echo $custom_data['stock'][0]; ?>" size="10">
-    </p>
-
-    <p>
       Vehicle Type:<br>
       <?php foreach ( $vehicle_types as $type ) { ?>
         <input type="radio" name="vehicle_meta[vehicle_type]" value="<?php echo $type; ?>" <?php echo ($custom_data['vehicle_type'][0] == $type) ? 'checked' : ''; ?>>
@@ -135,6 +130,18 @@ function custom_vehicle_meta_boxes() {
 
       <input type="radio" name="vehicle_meta[available]" value="Sold" <?php echo ($custom_data['available'][0] == 'Sold') ? 'checked' : ''; ?>>
       <label>Sold</label>
+    </p>
+  </div>
+
+  <div class="group">
+    <p>
+      <label>Stock:</label><br>
+      <input type="text" name="vehicle_meta[stock]" value="<?php echo $custom_data['stock'][0]; ?>" size="10">
+    </p>
+
+    <p>
+      <label>VIN:</label><br>
+      <input type="text" name="vehicle_meta[vin]" value="<?php echo $custom_data['vin'][0]; ?>" size="17">
     </p>
   </div>
 
@@ -249,6 +256,7 @@ function vehicle_edit_columns($columns){
     "title" => "Headline",
     "ymm" => "Year Make Model",
     "asking_price" => "Price",
+    "available" => "Availability",
     "author" => "Author",
     "date" => "Date Added"
   );
@@ -269,6 +277,9 @@ function vehicle_custom_columns($column){
       break;
     case "asking_price":
       echo '$' . $custom["asking_price"][0];
+      break;
+    case "available":
+      echo $custom["available"][0];
       break;
     case "ymm":
       echo "{$custom["year"][0]} {$custom["make"][0]} {$custom["model"][0]}";
@@ -337,10 +348,10 @@ function ors_vehicle_query($clauses) {
       $clauses['orderby'] .= ", ABS({$ors_vehicle_cookies[$param]} - $field)";
     }
   }
-  if ( $clauses['orderby'] == '' ) $clauses['orderby'] = 'available ASC, price ASC';
-  else $clauses['orderby'] = substr($clauses['orderby'], 2);
+  if ( $clauses['orderby'] == '' ) $clauses['orderby'] = ', price ASC';
+  $clauses['orderby'] = 'available ASC' . $clauses['orderby'];
 
-  // print "<pre>" . print_r($clauses, 1) . "</pre>";
+  //print "<pre>" . print_r($clauses, 1) . "</pre>";
   return $clauses;
 }
 
