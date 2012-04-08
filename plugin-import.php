@@ -157,9 +157,9 @@ function webentory_import($data = false) {
       $image_urls = array();
       $i = 1;
 
-      while ( $status = image_exists("${image_url_prefix}", "${i}.jpg") ) {
+      while ( $status = image_exists("${image_url_prefix}", "o-${i}.jpg") ) {
         if ( $status == 'EXISTS' or $status == true )
-          $image_urls[] = "${image_url_prefix}/${i}.jpg";
+          $image_urls[] = "${image_url_prefix}/o-${i}.jpg";
         $i++;
       }
 
@@ -319,8 +319,6 @@ function add_vehicle_post($data = false) {
         $dest_image = ORS_UPLOAD_DIR . $filename;
 
         if ( !file_exists($dest_image) ) {
-          echo "Adding $dest_image<br/>";
-
           if ( !file_exists(ORS_UPLOAD_DIR . '/' . $filename) )
             file_put_contents($dest_image, file_get_contents($src_image));
 
