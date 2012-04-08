@@ -4,7 +4,7 @@
  */
 add_action( 'admin_menu', 'ors_vehicle_options_add_page' );
 function ors_vehicle_options_add_page() {
-	add_submenu_page( "edit.php?post_type=vehicle", "Vehicle Options", "Options", 'read', 'vehicle_options', 'vehicle_options_do_page');
+	add_submenu_page( "edit.php?post_type=vehicle", "Vehicle Options", "Settings", 'read', 'vehicle_options', 'vehicle_options_do_page');
 }
 
 /**
@@ -14,6 +14,10 @@ function vehicle_options_do_page() {
 	$updated = false;
 
 	if ($_POST) {
+		if ($_POST['default-sort']) {
+			update_option('ors-vehicle-default-sort', trim(stripslashes($_POST['default-sort'])));
+			$updated = true;
+		}
 		if ($_POST['gallery-shortcode']) {
 			update_option('ors-vehicle-gallery-shortcode', trim(stripslashes($_POST['gallery-shortcode'])));
 			$updated = true;
@@ -24,6 +28,10 @@ function vehicle_options_do_page() {
 		}
 		if ($_POST['tell-a-friend-form']) {
 			update_option('ors-vehicle-tell-a-friend-form', trim(stripslashes($_POST['tell-a-friend-form'])));
+			$updated = true;
+		}
+		if ($_POST['vehicle-categories']) {
+			update_option('ors-vehicle-categories', trim($_POST['vehicle-categories']));
 			$updated = true;
 		}
 		if ($_POST['vehicle-types']) {
@@ -47,6 +55,10 @@ function vehicle_options_do_page() {
 		<form method="post">
 			<table class="form-table">
 				<tr valign="top">
+					<th scope="row">Default Sort Columns</th>
+					<td><input type="text" name="default-sort" size=80 value="<?php echo get_option('ors-vehicle-default-sort'); ?>"></td>
+				</tr>
+				<tr valign="top">
 					<th scope="row">Image Gallery Shortcode</th>
 					<td><input type="text" name="gallery-shortcode" size=80 value="<?php echo get_option('ors-vehicle-gallery-shortcode'); ?>"></td>
 				</tr>
@@ -57,6 +69,10 @@ function vehicle_options_do_page() {
 				<tr valign="top">
 					<th scope="row">Tell-A-Friend Shortcode</th>
 					<td><input type="text" name="tell-a-friend-form" size=80 value="<?php echo get_option('ors-vehicle-tell-a-friend-form'); ?>"></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">Vehicle Categories</th>
+					<td><textarea name="vehicle-categories" cols=80 rows=1><?php echo get_option('ors-vehicle-categories'); ?></textarea></td>
 				</tr>
 				<tr valign="top">
 					<th scope="row">Vehicle Types</th>

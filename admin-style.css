@@ -6,8 +6,9 @@
 #vehicle_meta .numeric { text-align:right; }
 
 .wp-list-table #thumbnail { width:70px; }
-.wp-list-table #title { width:250px; }
+.wp-list-table #ymm { width:250px; }
 .wp-list-table #asking_price { width:70px; }
-.wp-list-table #ymm { width:280px; }
+.wp-list-table #vehicle_category { width:70px; }
+.wp-list-table #author { width:70px; }
 
 .form-table th { text-align:right; }

@@ -7,11 +7,17 @@ Author: <a href="http://www.orangeroomsoftware.com/">Orange Room Software</a>
 Description: A post type for Vehicles
 */
 
+# Set plugin paths
 define('VEHICLE_PLUGIN_URL', '/wp-content/plugins/' . basename(dirname(__FILE__)) );
 define('VEHICLE_PLUGIN_DIR', dirname(__FILE__));
 
+# Setup upload paths
+$uploads = wp_upload_dir();
+if ( !defined('ORS_UPLOAD_DIR') ) define('ORS_UPLOAD_DIR', $uploads['path']);
+if ( !defined('ORS_UPLOAD_URL') ) define('ORS_UPLOAD_URL', $uploads['url']);
+
 # Post Thumbnails
-add_theme_support( ‘post-thumbnails’ );
+add_theme_support( 'post-thumbnails' );
 
 /*
  * Add shortcodes to the widgets and excerpt
@@ -46,6 +52,7 @@ register_activation_hook( __FILE__, 'activate_vehicle_post_type' );
 function activate_vehicle_post_type() {
   create_vehicle_post_type();
   flush_rewrite_rules();
+  add_option( 'ors-vehicle-default-sort', 'price ASC', '', true );
   add_option( 'ors-vehicle-global-options',  'Air Conditioning|Climate Control|Power Steering|Power Disc Brakes|Power Windows|Power Door Locks|Tilt Wheel|Telescoping Wheel|Steering Wheel Audio Controls|Cruise Control|AM/FM Stereo|Cassette|Single Compact Disc|Multi Compact Disc|CD Auto Changer|Premium Sound|Integrated Phone|Navigation System|Parking Sensors|Dual Front Airbags|Side Front Airbags|Front and Rear Side Airbags|ABS 4-Wheel|Traction Control|Leather|Full Leather|Power Seat|Dual Power Seats|Flip-up Sun Roof|Sliding Sun Roof|Moon Roof|Alloy Wheels', '', true );
   add_option( 'ors-vehicle-types', 'Car|Truck|SUV|Van|Minivan|Wagon', '', true );
 }
@@ -90,184 +97,11 @@ function create_vehicle_post_type() {
   register_post_type( 'vehicle', $args );
 }
 
-/**
- * Admin Options
- */
-require_once ( VEHICLE_PLUGIN_DIR . '/plugin-options.php' );
-
-/**
- * Meta Box for Editor
- */
-add_action( 'add_meta_boxes', 'add_custom_vehicle_meta_boxes' );
-function add_custom_vehicle_meta_boxes() {
-  add_meta_box("vehicle_meta", 'Vehicle Information', "custom_vehicle_meta_boxes", "vehicle", "normal", "high");
-}
-
-function custom_vehicle_meta_boxes() {
-  global $post;
-  $custom_data = get_post_custom($post->ID);
-
-  $options = array_filter(explode('|', $custom_data['options'][0]), 'strlen');
-  sort($options);
-
-  $global_options = explode('|', get_option('ors-vehicle-global-options'));
-  $vehicle_types = explode('|', get_option('ors-vehicle-types'));
-
-  ?>
-  <div class="group">
-    <p>
-      Vehicle Type:<br>
-      <?php foreach ( $vehicle_types as $type ) { ?>
-        <input type="radio" name="vehicle_meta[vehicle_type]" value="<?php echo $type; ?>" <?php echo ($custom_data['vehicle_type'][0] == $type) ? 'checked' : ''; ?>>
-        <label><?php echo $type; ?></label>
-      <?php } ?>
-    </p>
-
-    <p>
-      Availability Status:<br>
-      <input type="radio" name="vehicle_meta[available]" value="Available Now" <?php echo ($custom_data['available'][0] == 'Available Now') ? 'checked' : ''; ?>>
-      <label>Available Now</label>
-
-      <input type="radio" name="vehicle_meta[available]" value="Sold" <?php echo ($custom_data['available'][0] == 'Sold') ? 'checked' : ''; ?>>
-      <label>Sold</label>
-    </p>
-  </div>
-
-  <div class="group">
-    <p>
-      <label>Stock:</label><br>
-      <input type="text" name="vehicle_meta[stock]" value="<?php echo $custom_data['stock'][0]; ?>" size="10">
-    </p>
-
-    <p>
-      <label>VIN:</label><br>
-      <input type="text" name="vehicle_meta[vin]" value="<?php echo $custom_data['vin'][0]; ?>" size="17">
-    </p>
-  </div>
-
-  <div class="group">
-    <p>
-      Asking Price:<br>
-      $<input type="text" name="vehicle_meta[asking_price]" value="<?php echo $custom_data['asking_price'][0]; ?>" size="10">
-    </p>
-    <p>
-      Sale Price:<br>
-      $<input type="text" name="vehicle_meta[sale_price]" value="<?php echo $custom_data['sale_price'][0]; ?>" size="10">
-    </p>
-    <p>
-      Sale Expire:<br>
-      <input type="text" name="vehicle_meta[sale_expire]" value="<?php echo $custom_data['sale_expire'][0]; ?>" size="10">
-    </p>
-  </div>
-
-  <div class="group">
-    <p>
-      Year:<br>
-      <input type="text" name="vehicle_meta[year]" value="<?php echo $custom_data['year'][0]; ?>" size="4">
-    </p>
-    <p>
-      Make:<br>
-      <input type="text" name="vehicle_meta[make]" value="<?php echo $custom_data['make'][0]; ?>" size="15">
-    </p>
-    <p>
-      Model:<br>
-      <input type="text" name="vehicle_meta[model]" value="<?php echo $custom_data['model'][0]; ?>" size="40">
-    </p>
-  </div>
-
-  <div class="group">
-    <p>
-      Doors:<br>
-      <input type="text" name="vehicle_meta[doors]" value="<?php echo $custom_data['doors'][0]; ?>" size="2" class="numeric">
-    </p>
-    <p>
-      Mileage:<br>
-      <input type="text" name="vehicle_meta[mileage]" value="<?php echo $custom_data['mileage'][0]; ?>" size="6" class="numeric">
-    </p>
-    <p>
-      <label>Exterior Color:</label><br>
-      <input type="text" name="vehicle_meta[exterior_color]" value="<?php echo $custom_data['exterior_color'][0]; ?>" size="20">
-    </p>
-    <p>
-      <label>Interior Color:</label><br>
-      <input type="text" name="vehicle_meta[interior_color]" value="<?php echo $custom_data['interior_color'][0]; ?>" size="20">
-    </p>
-  </div>
-
-  <div class="group">
-    <p>
-      Engine:<br>
-      <input type="text" name="vehicle_meta[engine]" value="<?php echo $custom_data['engine'][0]; ?>" size="30">
-    </p>
-    <p>
-      Transmission:<br>
-      <input type="text" name="vehicle_meta[transmission]" value="<?php echo $custom_data['transmission'][0]; ?>" size="30">
-    </p>
-  </div>
-
-  <p>
-    Equipment:<br>
-    <input type="hidden" id="options-data" name="vehicle_meta[options]" value="<?php echo $custom_data['options'][0]; ?>">
-    <ul id="options" class="bundle">
-      <?php foreach ( $global_options as $value ) { if (empty($value)) continue; ?>
-      <li><input type="checkbox" value="<?php echo $value; ?>" <?php echo in_array($value, $options) ? 'checked="checked"' : ''; ?>> <?php echo $value; ?></li>
-      <?php } ?>
-    </ul>
-    <input type="text" id="add-option-text" name="add-option" value="" size="20">
-    <input type="button" id="add-option-button" value="Add">
-  </p>
-
-  <?php
-}
-
-add_action( 'save_post', 'save_vehicle_postdata' );
-function save_vehicle_postdata( $post_id ) {
-  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-    return;
-
-  // Check permissions
-  if ( 'page' == $_POST['post_type'] ) {
-    if ( !current_user_can( 'edit_page', $post_id ) )
-      return;
-  } else {
-    if ( !current_user_can( 'edit_post', $post_id ) )
-      return;
-  }
-
-  // Page Meta
-  $custom_data = $_POST['vehicle_meta'];
-  foreach ($custom_data as $key=>$value) {
-    update_post_meta($post_id, $key, $value);
-  }
-
-  // Global Features and Options
-  $options = explode('|', $custom_data['options']); sort($options);
-  $global_options = explode('|', get_option('ors-vehicle-global-options'));
-  $global_options = array_filter(array_unique(array_merge($global_options, $options)), 'strlen');
-  sort($global_options);
-  update_option('ors-vehicle-global-options', implode('|', $global_options));
-}
-
-add_filter("manage_edit-vehicle_columns", "vehicle_edit_columns");
-function vehicle_edit_columns($columns){
-  $columns = array(
-    "cb" => "<input type=\"checkbox\" />",
-    "thumbnail" => "Photo",
-    "title" => "Headline",
-    "ymm" => "Year Make Model",
-    "asking_price" => "Price",
-    "available" => "Availability",
-    "author" => "Author",
-    "date" => "Date Added"
-  );
-
-  return $columns;
-}
-
 add_action("manage_posts_custom_column",  "vehicle_custom_columns");
 function vehicle_custom_columns($column){
   global $post;
   $custom = get_post_custom();
+  if ( get_post_type() != 'vehicle' ) return;
 
   switch ($column) {
     case "thumbnail":
@@ -278,8 +112,8 @@ function vehicle_custom_columns($column){
     case "asking_price":
       echo '$' . $custom["asking_price"][0];
       break;
-    case "available":
-      echo $custom["available"][0];
+    case "vehicle_category":
+      echo $custom["vehicle_category"][0];
       break;
     case "ymm":
       echo "{$custom["year"][0]} {$custom["make"][0]} {$custom["model"][0]}";
@@ -296,26 +130,36 @@ function vehicle_custom_columns($column){
   }
 }
 
+/**
+ * Admin Includes
+ */
+require_once ( VEHICLE_PLUGIN_DIR . '/plugin-options.php' );
+require_once ( VEHICLE_PLUGIN_DIR . '/post-meta-input.php' );
+require_once ( VEHICLE_PLUGIN_DIR . '/plugin-import.php' );
+
 /*
  * Custom Query for this post type to sort by price
  * Don't use this sort in Admin
 */
 if ( !is_admin() ) add_filter( 'posts_clauses', 'ors_vehicle_query' );
 function ors_vehicle_query($clauses) {
-  if ( !strstr($clauses['where'], 'vehicle') ) return $clauses;
-
   global $wpdb, $ors_vehicle_cookies;
-  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'asking_price') as decimal) as price";
-  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'mileage') as decimal) as mileage";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'available') as available";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'vehicle_type') as vehicle_type";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'exterior_color') as exterior_color";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'interior_color') as interior_color";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'make') as make";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'model') as model";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'engine') as engine";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'transmission') as transmission";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'options') as options";
+
+  if ( !strstr($clauses['where'], 'vehicle') or is_single() ) return $clauses;
+
+  $clauses['where'] = " AND {$wpdb->posts}.post_type = 'vehicle' AND {$wpdb->posts}.post_status = 'publish' ";
+  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'asking_price' order by meta_id desc limit 1) as decimal) as price";
+  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'mileage' order by meta_id desc limit 1) as decimal) as mileage";
+  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'sort_order' order by meta_id desc limit 1) as decimal) as sort_order";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'category' order by meta_id desc limit 1) as category";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'vehicle_type' order by meta_id desc limit 1) as vehicle_type";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'exterior_color' order by meta_id desc limit 1) as exterior_color";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'interior_color' order by meta_id desc limit 1) as interior_color";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'make' order by meta_id desc limit 1) as make";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'model' order by meta_id desc limit 1) as model";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'engine' order by meta_id desc limit 1) as engine";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'transmission' order by meta_id desc limit 1) as transmission";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'options' order by meta_id desc limit 1) as options";
   $clauses['having'] = array();
   $clauses['orderby'] = '';
 
@@ -340,19 +184,73 @@ function ors_vehicle_query($clauses) {
   }
   if ( !empty($clauses['having']) ) {
     $clauses['where'] .= ' HAVING ' . implode(' and ', $clauses['having']);
+  } else {
+    unset($clauses['having']);
   }
 
   $order_params = array('price' => 'price_near', 'mileage' => 'mileage_near');
   foreach ($order_params as $field => $param) {
     if ( isset($ors_vehicle_cookies[$param]) and $ors_vehicle_cookies[$param] != '' ) {
-      $clauses['orderby'] .= ", ABS({$ors_vehicle_cookies[$param]} - $field)";
+      $clauses['orderby'] .= "ABS({$ors_vehicle_cookies[$param]} - $field)";
     }
   }
-  if ( $clauses['orderby'] == '' ) $clauses['orderby'] = ', price ASC';
-  $clauses['orderby'] = 'available ASC' . $clauses['orderby'];
 
-  //print "<pre>" . print_r($clauses, 1) . "</pre>";
+  $default_sort = get_option('ors-vehicle-default-sort');
+  if ( !$default_sort ) $default_sort = 'price ASC';
+  if ( $clauses['orderby'] == '' ) $clauses['orderby'] = get_option('ors-vehicle-default-sort');
+
+  // print "<pre>" . print_r($clauses, 1) . "</pre>";
   return $clauses;
+}
+
+/**
+ * Cookies to save search params
+ */
+add_action( 'init', 'ors_vehicle_set_cookies');
+function ors_vehicle_set_cookies() {
+  global $ors_vehicle_cookies;
+  $search_params = array('price_near', 'mileage_near', 'vehicle_type', 'exterior_color', 'text_search');
+
+  foreach ($search_params as $param) {
+    if ( isset($_POST[$param]) ) {
+      if ( $_POST['clear'] == 'Clear' ) $_POST[$param] = '';
+      $ors_vehicle_cookies[$param] = $_POST[$param];
+      setcookie($param, $_POST[$param], time() + 3600, COOKIEPATH, COOKIE_DOMAIN, false);
+    }
+
+    elseif ( isset($_COOKIE[$param]) ) {
+      $ors_vehicle_cookies[$param] = $_COOKIE[$param];
+    }
+  }
+}
+
+function explode_meta_data() {
+  $custom = array();
+  foreach ( get_post_custom() as $key => $value ) {
+    $custom[$key] = $value[0];
+  }
+  return $custom;
+}
+
+/**
+ * Output Filters
+ */
+
+add_filter("manage_edit-vehicle_columns", "vehicle_edit_columns");
+function vehicle_edit_columns($columns){
+  if ( get_post_type() != 'vehicle' ) return $columns;
+  $columns = array(
+    "cb" => "<input type=\"checkbox\" />",
+    "thumbnail" => "Photo",
+    "title" => "Title",
+    "ymm" => "Year Make Model",
+    "asking_price" => "Price",
+    "vehicle_category" => "Category",
+    "author" => "Author",
+    "date" => "Date Added"
+  );
+
+  return $columns;
 }
 
 /*
@@ -363,7 +261,7 @@ function ors_vehicle_search_box() {
   if ( get_post_type() != 'vehicle' ) return;
 
   if ( is_single() ) {
-    print '<a class="back-button" href="' . $_SERVER['HTTP_REFERER'] . '">◄ Back to Listings</a>';
+    print '<p><a class="back-button" href="javascript:history.go(-1)">◄ Back</a></p>';
     return;
   }
 
@@ -389,25 +287,6 @@ function ors_vehicle_search_box() {
   <?php
 }
 
-function ors_vehicle_set_cookies() {
-  global $ors_vehicle_cookies;
-  $search_params = array('price_near', 'mileage_near', 'vehicle_type', 'exterior_color', 'text_search');
-
-  foreach ($search_params as $param) {
-    if ( isset($_POST[$param]) ) {
-      if ( $_POST['clear'] == 'Clear' ) $_POST[$param] = '';
-      $ors_vehicle_cookies[$param] = $_POST[$param];
-      setcookie($param, $_POST[$param], time() + 3600, COOKIEPATH, COOKIE_DOMAIN, false);
-    }
-
-    elseif ( isset($_COOKIE[$param]) ) {
-      $ors_vehicle_cookies[$param] = $_COOKIE[$param];
-    }
-  }
-}
-add_action( 'init', 'ors_vehicle_set_cookies');
-
-
 /*
  * Fix the content
 */
@@ -415,25 +294,21 @@ add_filter( 'the_title', 'vehicle_title_filter' );
 function vehicle_title_filter($content) {
   if ( !in_the_loop() or get_post_type() != 'vehicle' ) return $content;
 
-  foreach ( get_post_custom() as $key => $value ) {
-    $custom[$key] = $value[0];
-  }
+  $custom = explode_meta_data();
 
-  if ( $custom['available'] == 'Sold' ) $sold = true; else $sold = false;
+  if ( $custom['category'] == 'Sold' ) $sold = true; else $sold = false;
 
   global $the_real_title;
   $the_real_title = $content;
 
   $output = '';
 
-  if ( $custom['asking_price'] or $sold )
+  if ( ($custom['asking_price'] or $sold) and $custom['asking_price'] != '0' )
     $output .= '<span class="price">' . ($sold ? 'Sold' : '$'.number_format($custom['asking_price'])) . '</span>';
   if ( $custom['year'] or $custom['make'] or $custom['model'] )
     $output .= '<span class="title">' . "{$custom['year']} {$custom['make']} {$custom['model']}" . '</span>';
   else
     $output .= '<span class="title">' . $content . '</span>';
-
-  $output .= '<span class="vehicle-type">' . $custom['vehicle_type'] . '</span>';
 
   return $output;
 }
@@ -442,11 +317,7 @@ add_filter('the_excerpt', 'vehicle_excerpt_filter');
 function vehicle_excerpt_filter($content) {
   if ( get_post_type() != 'vehicle' ) return $content;
 
-  foreach ( get_post_custom() as $key => $value ) {
-    $custom[$key] = $value[0];
-  }
-
-  if ( $custom['available'] == 'Sold' ) $visible = false; else $visible = true;
+  $custom = explode_meta_data();
 
   $output  = '';
 
@@ -456,22 +327,19 @@ function vehicle_excerpt_filter($content) {
 
   global $the_real_title;
   $output .= "<h2>$the_real_title</h2>";
-  $output .= "<ul class='meta'>";
-  $output .= "<li>";
-  if ( $custom['doors'] )
-    $output .= "{$custom['doors']} Door";
-  if ( $custom['exterior_color'] )
-    $output .= ", {$custom['exterior_color']} Exterior";
-  if ( $custom['interior_color'] )
-    $output .= "/{$custom['interior_color']} Interior";
-  if ( $custom['mileage'] )
-    $output .= ", " . number_format($custom['mileage']) . " Miles";
-  $output .= "</li>";
-  $output .= "</ul>";
 
-  $output .= "<p class='excerpt'>";
-  $output .= "  " . $content;
-  $output .= "</p>";
+  $info = array();
+  if ( $custom['doors'] )
+    $info[] = "{$custom['doors']} Door";
+  if ( $custom['exterior_color'] )
+    $info[] = ucwords($custom['exterior_color']) . " Exterior";
+  if ( $custom['interior_color'] )
+    $info[] = ucwords($custom['interior_color']) . " Interior";
+  if ( $custom['mileage'] )
+    $info[] = number_format($custom['mileage']) . " Miles";
+
+  if ( $info ) $output .= "<p class='meta'>" . implode(', ', $info) . "</p>";
+  $output .= "<p class='excerpt'>$content</p>";
 
   return $output;
 }
@@ -480,9 +348,7 @@ add_filter('the_content', 'vehicle_content_filter');
 function vehicle_content_filter($content) {
   if ( !is_single() or get_post_type() != 'vehicle' ) return $content;
 
-  foreach ( get_post_custom() as $key => $value ) {
-    $custom[$key] = $value[0];
-  }
+  $custom = explode_meta_data();
 
   $options = array_filter(explode('|', $custom['options']), 'strlen');
 
@@ -504,7 +370,7 @@ function vehicle_content_filter($content) {
     $output .= "  <li>Interior Color: " . $custom['interior_color'] . '</li>';
   $output .= "</ul>";
 
-  if ( is_array($options) ) {
+  if ( is_array($options) and !empty($options) ) {
     $output .= "<div class='options'>";
     $output .= "Equipment:<br>";
     $output .= '<ul>';
