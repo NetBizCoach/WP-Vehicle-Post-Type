@@ -10,5 +10,6 @@
 .wp-list-table #asking_price { width:70px; }
 .wp-list-table #vehicle_category { width:70px; }
 .wp-list-table #author { width:70px; }
+.wp-list-table #sort_order { width:50px; }
 
 .form-table th { text-align:right; }

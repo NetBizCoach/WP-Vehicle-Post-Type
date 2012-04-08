@@ -124,7 +124,7 @@ function kbb_import($data = false) {
 }
 
 function image_exists($path, $filename) {
-  if ( file_exists(ORS_UPLOAD_DIR . $filename) ) return false;
+  if ( file_exists(ORS_UPLOAD_DIR . $filename) ) return 'EXISTS';
   if ( strstr($path, 'http') ) {
     if ( `curl -sI "${path}/${filename}" | grep 'Content-Type: image/jpeg'` != '' ) return true;
   } else {
@@ -136,6 +136,11 @@ function image_exists($path, $filename) {
 function webentory_import($data = false) {
   set_time_limit(86400);
   if ( $data == false ) return 'No data file.';
+
+  ?><div class="updated"><p><strong>Importing takes a really long time. Please wait...</strong></p></div><?php
+  @ob_flush();
+  @flush();
+  @ob_end_flush();
 
   $row = -1;
   $added = 0;
@@ -152,12 +157,11 @@ function webentory_import($data = false) {
       $image_urls = array();
       $i = 1;
 
-      while ( image_exists("${image_url_prefix}", "${i}.jpg") ) {
-        $image_urls[] = "${image_url_prefix}/${i}.jpg";
+      while ( $status = image_exists("${image_url_prefix}", "${i}.jpg") ) {
+        if ( $status == 'EXISTS' or $status == true )
+          $image_urls[] = "${image_url_prefix}/${i}.jpg";
         $i++;
       }
-
-      print "Images ($image_url_prefix):<br/>" . implode('|', $image_urls) . '<br/>';
 
       $options = '';
 
@@ -251,7 +255,7 @@ function add_vehicle_post($data = false) {
   @flush();
   @ob_end_flush();
 
-  if ( in_vehicle_inventory($data['stock']) ) return false;
+  $update_post_id = in_vehicle_inventory($data['stock']);
 
   $wp_upload_dir = wp_upload_dir();
   $first_attach_id = '';
@@ -312,11 +316,13 @@ function add_vehicle_post($data = false) {
       $counter = 1;
       foreach ( explode('|', $data['images']) as $src_image ) {
         $filename = sprintf("%s-%d.jpg", $data['stock'], $counter);
-        $dest_image = $wp_upload_dir['path'] . $filename;
+        $dest_image = ORS_UPLOAD_DIR . $filename;
 
-        if ( !file_exists($dest_image) and !file_exists(ORS_UPLOAD_DIR . '/' . $filename) ) {
+        if ( !file_exists($dest_image) ) {
           echo "Adding $dest_image<br/>";
-          file_put_contents($dest_image, file_get_contents($src_image));
+
+          if ( !file_exists(ORS_UPLOAD_DIR . '/' . $filename) )
+            file_put_contents($dest_image, file_get_contents($src_image));
 
           $wp_filetype = wp_check_filetype(basename($dest_image), null );
 

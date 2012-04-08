@@ -109,6 +109,9 @@ function vehicle_custom_columns($column){
         the_post_thumbnail(array(50,50));
       }
       break;
+    case "sort_order":
+      echo $custom["sort_order"][0];
+      break;
     case "asking_price":
       echo '$' . $custom["asking_price"][0];
       break;
@@ -246,6 +249,7 @@ function vehicle_edit_columns($columns){
     "ymm" => "Year Make Model",
     "asking_price" => "Price",
     "vehicle_category" => "Category",
+    "sort_order" => "Sort",
     "author" => "Author",
     "date" => "Date Added"
   );
