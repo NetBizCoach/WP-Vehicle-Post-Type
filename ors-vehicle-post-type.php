@@ -55,6 +55,38 @@ function activate_vehicle_post_type() {
   add_option( 'ors-vehicle-default-sort', 'price ASC', '', true );
   add_option( 'ors-vehicle-global-options',  'Air Conditioning|Climate Control|Power Steering|Power Disc Brakes|Power Windows|Power Door Locks|Tilt Wheel|Telescoping Wheel|Steering Wheel Audio Controls|Cruise Control|AM/FM Stereo|Cassette|Single Compact Disc|Multi Compact Disc|CD Auto Changer|Premium Sound|Integrated Phone|Navigation System|Parking Sensors|Dual Front Airbags|Side Front Airbags|Front and Rear Side Airbags|ABS 4-Wheel|Traction Control|Leather|Full Leather|Power Seat|Dual Power Seats|Flip-up Sun Roof|Sliding Sun Roof|Moon Roof|Alloy Wheels', '', true );
   add_option( 'ors-vehicle-types', 'Car|Truck|SUV|Van|Minivan|Wagon', '', true );
+
+  # Rewrite rules
+  add_action( 'wp_loaded', 'ors_flush_rules' );
+  add_filter( 'rewrite_rules_array', 'ors_insert_rewrite_rules' );
+}
+
+# Rewrite rules
+add_filter( 'rewrite_rules_array', 'ors_insert_rewrite_rules' );
+
+add_filter('query_vars', 'ors_queryvars' );
+function ors_queryvars( $qvars )
+{
+  $qvars[] = 'vehicle_category';
+  return $qvars;
+}
+
+# flush_rules() if our rules are not yet included
+function ors_flush_rules(){
+  $rules = get_option( 'rewrite_rules' );
+  if ( !isset( $rules['(vehicles)/([^\/]+)$'] ) ) {
+    global $wp_rewrite;
+    $wp_rewrite->flush_rules();
+  }
+}
+
+# Adding a new rule
+function ors_insert_rewrite_rules( $rules )
+{
+  $new_rules = array();
+  $new_rules['vehicles/category/([^/]+)$'] = 'index.php?post_type=vehicle&vehicle_category=$matches[1]';
+  $new_rules['vehicles/category/([^/]+)/page/?([0-9]{1,})/?$'] = 'index.php?post_type=vehicle&vehicle_category=$matches[1]&paged=$matches[2]';
+  return $new_rules + $rules;
 }
 
 # Custom post type
@@ -146,15 +178,15 @@ require_once ( VEHICLE_PLUGIN_DIR . '/plugin-import.php' );
 */
 if ( !is_admin() ) add_filter( 'posts_clauses', 'ors_vehicle_query' );
 function ors_vehicle_query($clauses) {
-  global $wpdb, $ors_vehicle_cookies;
+  global $wpdb, $ors_vehicle_cookies, $wp_query;
 
   if ( !strstr($clauses['where'], 'vehicle') or is_single() ) return $clauses;
 
   $clauses['where'] = " AND {$wpdb->posts}.post_type = 'vehicle' AND {$wpdb->posts}.post_status = 'publish' ";
+  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'sort_order' and {$wpdb->postmeta}.meta_value != '') as decimal) as sort_order";
   $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'asking_price' order by meta_id desc limit 1) as decimal) as price";
   $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'mileage' order by meta_id desc limit 1) as decimal) as mileage";
-  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'sort_order' order by meta_id desc limit 1) as decimal) as sort_order";
-  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'category' order by meta_id desc limit 1) as category";
+  $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'vehicle_category' order by meta_id desc limit 1) as vehicle_category";
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'vehicle_type' order by meta_id desc limit 1) as vehicle_type";
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'exterior_color' order by meta_id desc limit 1) as exterior_color";
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'interior_color' order by meta_id desc limit 1) as interior_color";
@@ -165,6 +197,10 @@ function ors_vehicle_query($clauses) {
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'options' order by meta_id desc limit 1) as options";
   $clauses['having'] = array();
   $clauses['orderby'] = '';
+
+  if ( isset($wp_query->query_vars['vehicle_category']) ) {
+    $clauses['having'][] = "lower(vehicle_category) = '" . str_replace('-', ' ', $wp_query->query_vars['vehicle_category']) . "'";
+  }
 
   if ( isset($ors_vehicle_cookies['text_search']) and $ors_vehicle_cookies['text_search'] != '' ) {
     $clauses['having']['textsearch']  = "(make like '%{$ors_vehicle_cookies['text_search']}%'";

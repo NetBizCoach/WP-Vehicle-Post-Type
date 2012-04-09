@@ -250,11 +250,13 @@ function in_vehicle_inventory($stock = false) {
 function add_vehicle_post($data = false) {
   if ( $data == false ) return false;
 
+  set_time_limit(86400);
+
   # Flush the buffers so the web server stays running.
   @ob_flush();
   @flush();
   @ob_end_flush();
-  echo "<p style='display:none'></p>";
+  echo ".";
 
   $update_post_id = in_vehicle_inventory($data['stock']);
 
