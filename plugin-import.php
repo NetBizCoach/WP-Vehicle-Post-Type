@@ -254,6 +254,7 @@ function add_vehicle_post($data = false) {
   @ob_flush();
   @flush();
   @ob_end_flush();
+  echo "<p style='display:none'></p>";
 
   $update_post_id = in_vehicle_inventory($data['stock']);
 
