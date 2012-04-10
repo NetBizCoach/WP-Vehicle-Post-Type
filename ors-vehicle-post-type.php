@@ -55,15 +55,9 @@ function activate_vehicle_post_type() {
   add_option( 'ors-vehicle-default-sort', 'price ASC', '', true );
   add_option( 'ors-vehicle-global-options',  'Air Conditioning|Climate Control|Power Steering|Power Disc Brakes|Power Windows|Power Door Locks|Tilt Wheel|Telescoping Wheel|Steering Wheel Audio Controls|Cruise Control|AM/FM Stereo|Cassette|Single Compact Disc|Multi Compact Disc|CD Auto Changer|Premium Sound|Integrated Phone|Navigation System|Parking Sensors|Dual Front Airbags|Side Front Airbags|Front and Rear Side Airbags|ABS 4-Wheel|Traction Control|Leather|Full Leather|Power Seat|Dual Power Seats|Flip-up Sun Roof|Sliding Sun Roof|Moon Roof|Alloy Wheels', '', true );
   add_option( 'ors-vehicle-types', 'Car|Truck|SUV|Van|Minivan|Wagon', '', true );
-
-  # Rewrite rules
-  add_action( 'wp_loaded', 'ors_flush_rules' );
-  add_filter( 'rewrite_rules_array', 'ors_insert_rewrite_rules' );
 }
 
-# Rewrite rules
-add_filter( 'rewrite_rules_array', 'ors_insert_rewrite_rules' );
-
+# Setup my query vers
 add_filter('query_vars', 'ors_queryvars' );
 function ors_queryvars( $qvars )
 {
@@ -71,16 +65,8 @@ function ors_queryvars( $qvars )
   return $qvars;
 }
 
-# flush_rules() if our rules are not yet included
-function ors_flush_rules(){
-  $rules = get_option( 'rewrite_rules' );
-  if ( !isset( $rules['(vehicles)/([^\/]+)$'] ) ) {
-    global $wp_rewrite;
-    $wp_rewrite->flush_rules();
-  }
-}
-
-# Adding a new rule
+# Rewrite rules
+add_filter( 'rewrite_rules_array', 'ors_insert_rewrite_rules' );
 function ors_insert_rewrite_rules( $rules )
 {
   $new_rules = array();
@@ -183,7 +169,7 @@ function ors_vehicle_query($clauses) {
   if ( !strstr($clauses['where'], 'vehicle') or is_single() ) return $clauses;
 
   $clauses['where'] = " AND {$wpdb->posts}.post_type = 'vehicle' AND {$wpdb->posts}.post_status = 'publish' ";
-  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'sort_order' and {$wpdb->postmeta}.meta_value != '') as decimal) as sort_order";
+  $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'sort_order' and {$wpdb->postmeta}.meta_value != '' order by meta_id desc limit 1) as decimal) as sort_order";
   $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'asking_price' order by meta_id desc limit 1) as decimal) as price";
   $clauses['fields'] .= ", CAST((select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'mileage' order by meta_id desc limit 1) as decimal) as mileage";
   $clauses['fields'] .= ", (select {$wpdb->postmeta}.meta_value from {$wpdb->postmeta} where {$wpdb->postmeta}.post_id = {$wpdb->posts}.ID and {$wpdb->postmeta}.meta_key = 'vehicle_category' order by meta_id desc limit 1) as vehicle_category";
@@ -199,7 +185,7 @@ function ors_vehicle_query($clauses) {
   $clauses['orderby'] = '';
 
   if ( isset($wp_query->query_vars['vehicle_category']) ) {
-    $clauses['having'][] = "lower(vehicle_category) = '" . str_replace('-', ' ', $wp_query->query_vars['vehicle_category']) . "'";
+    $clauses['having'][] = "lower(vehicle_category) like '%" . str_replace('-', ' ', urldecode($wp_query->query_vars['vehicle_category'])) . "%'";
   }
 
   if ( isset($ors_vehicle_cookies['text_search']) and $ors_vehicle_cookies['text_search'] != '' ) {
@@ -309,7 +295,7 @@ function ors_vehicle_search_box() {
   $vehicle_types = explode('|', get_option('ors-vehicle-types'));
   ?>
   <div id='ors-vehicle-search-box'>
-    <form action="/vehicles/" method="POST">
+    <form method="POST">
       Type <select id="vehicle_type" type="text" name="vehicle_type">
         <option <?php echo $ors_vehicle_cookies['vehicle_type'] == 'All' ? 'selected' : ''; ?>>All</option>
         <?php foreach ( $vehicle_types as $type ) { ?>
