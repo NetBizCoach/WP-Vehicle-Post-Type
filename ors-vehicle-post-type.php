@@ -322,14 +322,14 @@ function vehicle_title_filter($content) {
 
   $custom = explode_meta_data();
 
-  if ( $custom['category'] == 'Sold' ) $sold = true; else $sold = false;
+  if ( $custom['sold'] == 'yes' ) $sold = true; else $sold = false;
 
   global $the_real_title;
   $the_real_title = $content;
 
   $output = '';
 
-  if ( ($custom['asking_price'] or $sold) and $custom['asking_price'] != '0' )
+  if ( ($custom['asking_price'] and $custom['asking_price'] != '0') or $sold )
     $output .= '<span class="price">' . ($sold ? 'Sold' : '$'.number_format($custom['asking_price'])) . '</span>';
   if ( $custom['year'] or $custom['make'] or $custom['model'] )
     $output .= '<span class="title">' . "{$custom['year']} {$custom['make']} {$custom['model']}" . '</span>';

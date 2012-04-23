@@ -73,6 +73,9 @@ function custom_vehicle_meta_boxes() {
       Sale Expire:<br>
       <input type="text" name="vehicle_meta[sale_expire]" value="<?php echo $custom_data['sale_expire'][0]; ?>" size="10">
     </p>
+    <p>
+      <br><input type="checkbox" name="vehicle_meta[sold]" value="yes" <?php echo $custom_data['sold'][0] == 'yes' ? 'checked="checked"' : ''; ?>"> Sold
+    </p>
   </div>
 
   <div class="group">
@@ -153,6 +156,10 @@ function save_vehicle_postdata( $post_id ) {
 
   // Page Meta
   $custom_data = $_POST['vehicle_meta'];
+
+
+  if ( !$custom_data['sold'] ) $custom_data['sold'] = 'no';
+
   foreach ( $custom_data as $key => $value ) {
     update_post_meta( $post_id, $key, $value );
   }
