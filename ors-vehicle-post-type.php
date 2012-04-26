@@ -411,6 +411,7 @@ function vehicle_content_filter($content) {
     $output .= '<h2>Send Email Inquiry</h2>';
     $output .= $inquiry;
     $output .= '</div>';
+    $output .= '<script type="text/javascript" charset="utf-8">jQuery(function() { jQuery(".inquiry-form form input[name*=subject]").val("'."Vehicle Inquiry for {$custom['stock']} - {$custom['year']} {$custom['make']} {$custom['model']}".'"); });</script>';
   }
 
   if ( $tell_a_friend = get_option('ors-vehicle-tell-a-friend-form') ) {
